@@ -32,5 +32,5 @@ const kTextFieldDecoration = InputDecoration(
     borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
-  hintStyle: TextStyle(color: Colors.grey),
+  // hintStyle: TextStyle(color: Colors.grey),
 );
