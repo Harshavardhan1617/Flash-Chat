@@ -17,12 +17,12 @@ class FlashChat extends StatelessWidget {
           bodySmall: TextStyle(color: Colors.black54),
         ),
       ),
-      initialRoute: '/login',
+      initialRoute: WelcomeScreen.id,
       routes: {
-        '/': (context) => WelcomeScreen(),
-        'login': (context) => LoginScreen(),
-        '/register': (context) => RegistrationScreen(),
-        'chat': (context) => ChatScreen(),
+        WelcomeScreen.id: (context) => WelcomeScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        RegistrationScreen.id: (context) => RegistrationScreen(),
+        ChatScreen.id: (context) => ChatScreen(),
       },
     );
   }
