@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +13,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
+  final _db = FirebaseFirestore.instance;
   late User loggedInUser;
+  late String messegeText;
 
   @override
   void initState() {
@@ -44,6 +47,9 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: Icon(Icons.close),
               onPressed: () {
                 //Implement logout functionality
+                // _auth.signOut();
+                // Navigator.pop(context);
+                // getMessegeStream();
               }),
         ],
         title: Text('⚡️Chat'),
@@ -54,6 +60,28 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+              stream: _db.collection("messeges").snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.lightBlueAccent,
+                    ),
+                  );
+                }
+                final messeges = snapshot.data?.docs.reversed.toList();
+                final List<Text> messegeList = [];
+                for (var messege in messeges!) {
+                  final messegeText = messege["text"];
+                  final messegeSender = messege["sender"];
+                  messegeList.add(Text("$messegeText from $messegeSender"));
+                }
+                return Column(
+                  children: messegeList,
+                );
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -62,14 +90,17 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       onChanged: (value) {
-                        //Do something with the user input.
+                        messegeText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      _db.collection('messeges').add({
+                        'text': messegeText,
+                        'sender': loggedInUser.email,
+                      });
                     },
                     child: Text(
                       'Send',
